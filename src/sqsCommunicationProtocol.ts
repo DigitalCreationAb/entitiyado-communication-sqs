@@ -1,7 +1,4 @@
-import { ActorCommunicationProtocol } from "@digitalcreation/aws-lambda-actors/src/actorCommunicationProtocol"
-import { Message } from "@digitalcreation/aws-lambda-actors/src/message"
-import { ActorRef } from "@digitalcreation/aws-lambda-actors/src/actorRef";
-import { Command } from "@digitalcreation/aws-lambda-actors/src/command";
+import { ActorCommunicationProtocol, Message, ActorRef, Command } from "@digitalcreation/aws-lambda-actors"
 import { SQSEvent } from "aws-lambda";
 import { SQS } from 'aws-sdk';
 import { Md5 } from 'ts-md5/dist/md5';
