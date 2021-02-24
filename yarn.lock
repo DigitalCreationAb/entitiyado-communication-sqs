@@ -23,10 +23,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@digitalcreation/aws-lambda-actors@^0.3.0":
-  version "0.3.0"
-  resolved "https://f.feedz.io/digital-creation/open/npm/%40digitalcreation%2faws-lambda-actors/0.3.0/download#e0f114b93206b6cec71f64f54f7918ca2f652108"
-  integrity sha512-CRWNGuDR6HJ6lZfS0T3TfkY9iB7aY25b2ZTSWROF2GTPvfL7Yz9LfwH0Ye/fhs42iwSVQWJGHm9OhJopJZfFDw==
+"@digitalcreation/aws-lambda-actors@^0.6.0":
+  version "0.6.0"
+  resolved "https://f.feedz.io/digital-creation/open/npm/%40digitalcreation%2faws-lambda-actors/0.6.0/download#f0e59cc089ce86dc999169e742b303acf60667ae"
+  integrity sha512-G0Tp6Nw1RWsn0Nsgl6eIelAYTnuQuHa8x0N7PIjd/t8aiK01UTv04Ca+VwC7i/tjeiWChXQ4r0CpKMp8zHSykw==
 
 "@types/aws-lambda@^8.10.72":
   version "8.10.72"
@@ -312,6 +312,11 @@ supports-color@^5.3.0:
   integrity sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==
   dependencies:
     has-flag "^3.0.0"
+
+ts-md5@^1.2.7:
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/ts-md5/-/ts-md5-1.2.7.tgz#b76471fc2fd38f0502441f6c3b9494ed04537401"
+  integrity sha512-emODogvKGWi1KO1l9c6YxLMBn6CEH3VrH5mVPIyOtxBG52BvV4jP3GWz6bOZCz61nLgBc3ffQYE4+EHfCD+V7w==
 
 tslib@^1.13.0, tslib@^1.8.1:
   version "1.14.1"

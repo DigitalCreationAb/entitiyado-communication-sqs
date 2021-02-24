@@ -9,14 +9,15 @@
         "typescript": "^4.1.5"
     },
     "dependencies": {
-        "@digitalcreation/aws-lambda-actors": "^0.3.0"
+        "@digitalcreation/aws-lambda-actors": "^0.6.0",
+        "ts-md5": "^1.2.7"
     },
     "files": [
         "dist"
     ],
     "scripts": {
         "build": "npx tsc -p .",
-        "publish": "yarn run build && npm publish . --scope digitalcreation",
+        "push": "yarn run build && npm publish . --scope digitalcreation",
         "package": "yarn run build && npm pack ."
     }
 }

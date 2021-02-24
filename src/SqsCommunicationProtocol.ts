@@ -4,6 +4,7 @@ import { ActorRef } from "@digitalcreation/aws-lambda-actors/src/actorRef";
 import { Command } from "@digitalcreation/aws-lambda-actors/src/command";
 import { SQSEvent } from "aws-lambda";
 import { SQS } from 'aws-sdk';
+import { Md5 } from 'ts-md5/dist/md5';
 
 const groupBy = <T>(arr: T[], getKey: (item: T) => string): { [key: string]: T[] } => {
     return arr.reduce((storage, item) => {
@@ -18,12 +19,14 @@ const groupBy = <T>(arr: T[], getKey: (item: T) => string): { [key: string]: T[]
 }
 
 export class SqsCommunicationProtocol implements ActorCommunicationProtocol {
-    private _sqs: SQS;
-    private _queueUrl: string;
+    private readonly _sqs: SQS;
+    private readonly _region: string;
+    private readonly _accountId: string;
 
-    constructor(region: string, accountId: string, queueName: string) {
+    constructor(region: string, accountId: string) {
         this._sqs = new SQS();
-        this._queueUrl = `https://sqs.${region}.amazonaws.com/${accountId}/${queueName}`;
+        this._region = region;
+        this._accountId = accountId;
     }
 
     receive(input: any): { receiver: ActorRef; commands: Command[] }[] {
@@ -33,7 +36,7 @@ export class SqsCommunicationProtocol implements ActorCommunicationProtocol {
             return [];
         }
 
-        const grouped = groupBy(sqsInput.Records, x => x.attributes.MessageGroupId || '');
+        const grouped = groupBy(sqsInput.Records, x => x.messageAttributes["Receiver"].stringValue || '');
 
         const result: { receiver: ActorRef; commands: Command[] }[] = [];
 
@@ -56,11 +59,18 @@ export class SqsCommunicationProtocol implements ActorCommunicationProtocol {
         return result;
     }
 
-    async send(id: string, message: Message, sender: ActorRef): Promise<void> {
+    async send(to: ActorRef, message: Message, sender: ActorRef): Promise<void> {
+        const queueUrl = `https://sqs.${this._region}.amazonaws.com/${this._accountId}/${to.type}`;
+        const groupId = Md5.hashStr(to.toString()) as string;
+
         await this._sqs.sendMessage({
-            QueueUrl: this._queueUrl,
+            QueueUrl: queueUrl,
             MessageBody: JSON.stringify(message.body),
             MessageAttributes: {
+                Receiver: {
+                    StringValue: to.toString(),
+                    DataType: 'String',
+                },
                 Sender: {
                     StringValue: sender.toString(),
                     DataType: 'String',
@@ -70,12 +80,7 @@ export class SqsCommunicationProtocol implements ActorCommunicationProtocol {
                     DataType: 'String',
                 },
             },
-            MessageSystemAttributes: {
-                MessageGroupId: {
-                    StringValue: id,
-                    DataType: 'String',
-                }
-            }
+            MessageGroupId: groupId
         }).promise();
     }
 }
