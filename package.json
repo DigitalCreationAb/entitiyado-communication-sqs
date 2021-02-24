@@ -1,6 +1,6 @@
 {
     "name": "@digitalcreation/lambda-actors-sqs",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "license": "MIT",
     "devDependencies": {
         "@types/aws-lambda": "^8.10.72",
@@ -12,9 +12,7 @@
         "@digitalcreation/aws-lambda-actors": "^0.6.0",
         "ts-md5": "^1.2.7"
     },
-    "files": [
-        "dist"
-    ],
+    "files": ["dist", "src"],
     "scripts": {
         "build": "npx tsc -p .",
         "push": "yarn run build && npm publish . --scope digitalcreation",
