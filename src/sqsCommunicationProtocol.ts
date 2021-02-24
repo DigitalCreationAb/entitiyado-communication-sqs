@@ -1,4 +1,4 @@
-import { ActorCommunicationProtocol, Message, ActorRef, Command } from "@digitalcreation/aws-lambda-actors"
+import { ActorCommunicationProtocol, ActorRef, Command } from "@digitalcreation/aws-lambda-actors"
 import { SQSEvent } from "aws-lambda";
 import { SQS } from 'aws-sdk';
 import { Md5 } from 'ts-md5/dist/md5';
@@ -56,24 +56,24 @@ export class SqsCommunicationProtocol implements ActorCommunicationProtocol {
         return result;
     }
 
-    async send(to: ActorRef, message: Message, sender: ActorRef): Promise<void> {
+    async send(to: ActorRef, command: Command): Promise<void> {
         const queueUrl = `https://sqs.${this._region}.amazonaws.com/${this._accountId}/${to.type}`;
         const groupId = Md5.hashStr(to.toString()) as string;
 
         await this._sqs.sendMessage({
             QueueUrl: queueUrl,
-            MessageBody: JSON.stringify(message.body),
+            MessageBody: JSON.stringify(command.body),
             MessageAttributes: {
                 Receiver: {
                     StringValue: to.toString(),
                     DataType: 'String',
                 },
                 Sender: {
-                    StringValue: sender.toString(),
+                    StringValue: command.sender?.toString() || '',
                     DataType: 'String',
                 },
                 Type: {
-                    StringValue: message.type,
+                    StringValue: command.type,
                     DataType: 'String',
                 },
             },
