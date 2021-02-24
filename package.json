@@ -1,8 +1,9 @@
 {
     "name": "@digitalcreation/lambda-actors-sqs",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "license": "MIT",
     "devDependencies": {
+        "@types/node": "^14.14.31",
         "rimraf": "^3.0.2",
         "rollup": "^2.39.1",
         "rollup-plugin-dts": "^2.0.1",
@@ -10,10 +11,10 @@
         "typescript": "^4.1.5"
     },
     "dependencies": {
-        "@digitalcreation/aws-lambda-actors": "^0.10.0",
-        "ts-md5": "^1.2.7",
+        "@digitalcreation/aws-lambda-actors": "^0.12.0",
+        "@types/aws-lambda": "^8.10.72",
         "aws-sdk": "^2.849.0",
-        "@types/aws-lambda": "^8.10.72"
+        "ts-md5": "^1.2.7"
     },
     "files": [
         "index.js",
