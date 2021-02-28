@@ -1,4 +1,4 @@
-import { ActorCommunicationProtocol, ActorRef, Command } from "@digitalcreation/aws-lambda-actors"
+import { CommunicationProtocol, EntityRef, Command } from "@entitiyado/core"
 import { SQSEvent } from "aws-lambda";
 import { SQS } from 'aws-sdk';
 import { Md5 } from 'ts-md5/dist/md5';
@@ -15,7 +15,7 @@ const groupBy = <T>(arr: T[], getKey: (item: T) => string): { [key: string]: T[]
     }, {} as { [key: string]: T[] });
 }
 
-export class SqsCommunicationProtocol implements ActorCommunicationProtocol {
+export class SqsCommunicationProtocol implements CommunicationProtocol {
     private readonly _sqs: SQS;
     private readonly _region: string;
     private readonly _accountId: string;
@@ -26,37 +26,41 @@ export class SqsCommunicationProtocol implements ActorCommunicationProtocol {
         this._accountId = accountId;
     }
 
-    receive(input: any): { receiver: ActorRef; commands: Command[] }[] {
+    receive(input: any): { receiver: EntityRef; commands: Command[] }[] {
         const sqsInput = input as SQSEvent;
 
         if (!sqsInput) {
             return [];
         }
 
-        const grouped = groupBy(sqsInput.Records, x => x.messageAttributes["Receiver"].stringValue || '');
+        const grouped = groupBy(sqsInput.Records, x => x.messageAttributes.Receiver.stringValue || '');
 
-        const result: { receiver: ActorRef; commands: Command[] }[] = [];
+        const result: { receiver: EntityRef; commands: Command[] }[] = [];
 
         for (const groupedKey in grouped) {
-            const receiver = ActorRef.parse(groupedKey, this);
+            if (!(groupedKey in grouped)) {
+                continue;
+            }
+
+            const receiver = EntityRef.parse(groupedKey, this);
 
             if (!receiver) {
                 continue;
             }
 
             result.push({
-                receiver: receiver,
+                receiver,
                 commands: grouped[groupedKey].map(x => new Command(
-                    x.messageAttributes["Type"].stringValue || '',
+                    x.messageAttributes.Type.stringValue || '',
                     JSON.parse(x.body),
-                    ActorRef.parse(x.messageAttributes["Sender"].stringValue || '', this)))
-            })
+                    EntityRef.parse(x.messageAttributes.Sender.stringValue || '', this)))
+            });
         }
 
         return result;
     }
 
-    async send(to: ActorRef, command: Command): Promise<void> {
+    async send(to: EntityRef, command: Command): Promise<void> {
         const queueUrl = `https://sqs.${this._region}.amazonaws.com/${this._accountId}/${to.type}`;
         const groupId = Md5.hashStr(to.toString()) as string;
 
